@@ -4,7 +4,7 @@ module Tests
 
     [<Fact>]
     let ``Day1 Part1`` () =
-        let answer = Day1.Part1.solution "test"
+        let answer = Day1.Part1.solution "Day1-1.txt"
 
-        Assert.Equal("hello test", answer)
+        Assert.Equal(54667, answer)
 

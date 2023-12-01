@@ -1,5 +1,8 @@
 ﻿module Program =
 
+    open Day1
     let [<EntryPoint>] main _ =
-        printfn "Hello from F#"
+        
+        let answer = Day1.Part1.solution "Day1-1.txt"
+        printfn "%i" answer
         0
