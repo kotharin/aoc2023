@@ -3,6 +3,6 @@
     open Day1
     let [<EntryPoint>] main _ =
         
-        let answer = Day1.Part1.solution "Day1-1.txt"
+        let answer = Day1.Part2.solution "Day1-2.txt"
         printfn "%i" answer
         0

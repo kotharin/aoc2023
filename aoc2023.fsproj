@@ -16,6 +16,9 @@
       <None Include="Day1-1.txt">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Include="Day1-2.txt">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
   </ItemGroup>
 
   <ItemGroup>
