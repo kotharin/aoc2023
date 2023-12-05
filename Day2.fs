@@ -3,9 +3,7 @@ namespace Day2
 open System
 open System.IO
 
-module Part1 =
-
-
+module Shared =
 
     type GameSet = {
         Red: int
@@ -52,6 +50,10 @@ module Part1 =
             else
                 false
 
+        // get the color counts for the set needed to keep the set valid
+        static member getColorCounts (set:GameSet) =
+            set.Red, set.Blue, set.Green
+
     type Game = {
         Id: int
         Sets: GameSet[]
@@ -73,7 +75,18 @@ module Part1 =
                 ) (true)
             //printfn "id:%i, valid:%b" game.Id allSetsValid
             game.Id, allSetsValid
+        // get min color count to keep the game valid
+        static member getColorCountPower (game:Game) =
+            let reds, blues, greens =
+                game.Sets
+                |> Array.map(GameSet.getColorCounts)
+                |> Array.unzip3
+            Array.max(reds)*Array.max(blues)*Array.max(greens)  
 
+
+module Part1 =
+
+    open Shared
     let solution inputFile = 
 
         let maxRed,maxBlue, maxGreen = 12, 14, 13
@@ -87,3 +100,14 @@ module Part1 =
                 gvalid = true
             ) |> Array.sumBy(fst) 
         invgsum
+
+module Part2 =
+    open Shared
+    let solution inputFile =
+        let lines = File.ReadAllLines(inputFile)
+
+        lines
+        |> Array.map(Game.parse)
+        |> Array.map(Game.getColorCountPower)
+        |> Array.sum
+        
