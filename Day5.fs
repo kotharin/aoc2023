@@ -1,8 +1,8 @@
 namespace Day5
 
 open System.IO
-module Part1 = 
 
+module Shared =
     type RangeInfo = {
         SourceStart: int64
         DestinationStart: int64
@@ -88,6 +88,10 @@ module Part1 =
             dest
         ) seed
 
+module Part1 = 
+
+    open Shared
+
     let solution inputFile =
         let lines = File.ReadAllLines(inputFile)
 
@@ -126,3 +130,67 @@ module Part1 =
         data.Seeds
         |> Array.map(getFinalDestination maxMaps data.Maps)
         |> Array.min
+
+module Part2 = 
+
+    open Shared
+
+    let solution inputFile =
+
+        let lines = File.ReadAllLines(inputFile)
+
+        let data, _, _ = 
+            lines
+            |> Array.fold( fun (data, mapType, mapIndex) line ->
+
+                let x = 
+                    if (line.Trim() = "") then
+                        // separator
+                        // reset the maptype and increment the mapindex
+                        (data, "", (mapIndex + 1))
+                    else    
+                        if (line.IndexOf(":") >= 0) then
+                            // new section
+                            let chunks = line.Split([|':'|])
+                            let newMapType = chunks.[0]
+                            let payload = chunks.[1].Trim()
+                            if (newMapType = "seeds") then
+                                // get the seeds info
+                                let newData = Data.addSeeds data payload
+                                (newData, "", 0)
+                            else
+                                (data, newMapType, mapIndex)
+                        else
+                            // line of map data
+                            // add to existing map in data
+                            let newData = Data.addToRangeMap data mapIndex mapType (line.Trim())
+                            (newData, mapType, mapIndex)
+                x
+            ) (Data.empty, "", 0)
+
+        // Go through each seed and get their final destination
+        let maxMaps = data.Maps.Count
+    
+        let seedRanges,_,_ =
+            data.Seeds
+            |> Array.fold( fun (list, pos, prevValue) seed ->
+                if (pos%2 = 0) then
+                    let newRange = [|prevValue..(prevValue + seed - 1L)|]
+                    let newList = newRange::list
+                    (newList, pos+1, seed)
+                else
+                    (list, pos + 1, seed)
+            ) (List.empty, 1, 0L)
+        // Loop through ranges and get destination
+        seedRanges
+        |> List.map(fun range ->
+            let mr =
+                range
+                |> Array.Parallel.map(fun range -> 
+                    let ret = getFinalDestination maxMaps data.Maps range
+                    printfn "range done"
+                    ret)
+                |> Array.min
+            mr
+        )
+        |> List.min
