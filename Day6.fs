@@ -1,12 +1,9 @@
 namespace Day6
 
 open System.IO
-module Part1 =
 
-    // beat:[|33; 49; 14; 26|] 588588
-    // beat:[|33; 49; 14; 26|]
-
-    let waysToBeatMaxDistance time maxDistance =
+module Shared =
+    let waysToBeatMaxDistance time (maxDistance:int64) =
         
         // only need o do half since the numbers
         // repeat after the half way point
@@ -14,18 +11,23 @@ module Part1 =
 
         let count =
             timeIntervals
-            |> Array.map(fun ti ->
+            |> Array.fold(fun cnt ti ->
                 // Get distance the boat can travel 
                 // if button pushed for the given time interval
-                ti * (time - ti)
-            )
-            |> Array.filter(fun d -> d > maxDistance)
-            |> Array.length
+                let distance = ((int64)ti) * (int64)(time - ti)
+                if (distance > maxDistance) then
+                    cnt + 1
+                else cnt
+            ) 0
 
         if (time%2 = 0) then
             count*2 - 1
         else
             count*2
+
+module Part1 =
+
+    open Shared
     let solution inputFile =
         
         let lines = File.ReadAllLines(inputFile)
@@ -49,7 +51,7 @@ module Part1 =
                         chunks.[1].Trim().Split([|' '|])
                         |> Array.map(fun s -> 
                             if (s.Length > 0) then
-                                Some ((int)(s.Trim()))
+                                Some ((int64)(s.Trim()))
                             else None
                         )
                         |> Array.choose id
@@ -63,4 +65,27 @@ module Part1 =
         |> Array.fold(fun prod way ->
             prod * way
         ) 1
+
+module Part2 =
+
+    open System.IO
+    open Shared
+    
+    let solution inputFile =
+        
+        let lines = File.ReadAllLines inputFile
+
+        let time, distance =
+            lines
+            |> Array.fold( fun (t,d) line ->
+                let chunks = line.Split([|':'|])
+                if (chunks.[0].Trim() = "Time") then
+                    let ft = (int)(chunks.[1].Trim().Replace(" ", ""))
+                    ft, d
+                else
+                    let fd = (int64)(chunks.[1].Trim().Replace(" ", ""))
+                    t, fd
+            ) (0, 0L)
+
+        waysToBeatMaxDistance time distance
         
