@@ -73,12 +73,35 @@ module Shared =
             let rank = getRank cards
 
             {Cards = cards; Bid = bid; TypeRank = rank}
-
+    let getCardValue (card:string) =
+        if (card = "T") then
+            10
+        elif (card = "J") then
+            11
+        elif (card = "Q") then
+            12
+        elif (card = "K") then
+            13
+        elif (card = "A") then
+            14
+        else
+            (int)card
+        
 module Part1 =
     open System.IO
     open Shared
 
-    //let rankHands (han)
+    
+    //let rankHands (hands:Hand[]) =
+        
+        //let rec sortAndGroupuByCol col (unsorted:(string*) (sorted: Hand list) =
+            // If sorting by the last column
+            // the array should be fully sorted
+    //        if (col = 4) then
+    //            let tsa = 
+
+    //    ()
+    
     let solution inputFile =
         
         let lines = File.ReadAllLines inputFile
