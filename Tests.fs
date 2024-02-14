@@ -69,3 +69,9 @@ module Tests
         let answer = Day8.Part1.solution "Day8-1.txt"
 
         Assert.Equal(16409, answer)
+
+    [<Fact>]
+    let ``Day9 Part1`` () =
+        let answer = Day9.Part1.solution "Day9-1.txt"
+
+        Assert.Equal(1731106378, answer)
