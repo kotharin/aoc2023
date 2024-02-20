@@ -1,9 +1,7 @@
 namespace Day9
 
-module Part1 =
+module Shared =
 
-    open System
-    open System.IO
 
     type Data = {
         StartingList: int list
@@ -46,6 +44,13 @@ module Part1 =
 
         {Data.StartingList = startingNumbers; DifferencesList = diffs}
 
+module Part1 =
+
+    open System
+    open System.IO
+    open Shared
+
+
     // Use the last row (0's) and propogate the diff up
     // to get the prediction for the first row
     let predictNextValue (data:Data) =
@@ -72,4 +77,35 @@ module Part1 =
         |> Array.Parallel.map(parseDataLine)
         |> Array.fold(fun sum data ->
             sum + predictNextValue data
+        ) 0
+        
+module Part2 =
+
+    open System
+    open System.IO
+    open Shared
+
+    let predictFirstValue (data:Data) =
+
+        // Append the starting row to the diffs
+        let allRows = data.StartingList::data.DifferencesList
+        let diffCount = allRows.Length
+
+        [|diffCount - 1..-1..0|]
+        |> Array.fold( fun lastDiff row ->
+            // Get the value of the last element in the current row list
+            let cr = allRows.[row]
+            let firstValue = cr.[0]
+            // calculate the new diff
+            firstValue - lastDiff
+        ) 0
+
+    let solution inputFile =
+
+        let lines = File.ReadAllLines(inputFile)
+
+        lines
+        |> Array.Parallel.map(parseDataLine)
+        |> Array.fold(fun sum data ->
+            sum + predictFirstValue data
         ) 0
